@@ -1,13 +1,17 @@
 import { AlertDialog, Box, Button, Card, Dialog, Flex, Text, TextArea, TextField } from "@radix-ui/themes"
 import { useState } from "react"
 import useUpdateTodo from "../hooks/useUpdateTodo"
+import useCompleteTodo from "../hooks/useCompleteTodo";
+import useDeleteTodo from "../hooks/useDeleteTodo";
 
 
-const Todo = ({index, todo}) => {
+const Todo = ({ index, todo }) => {
 
     const handleTodoEdit = useUpdateTodo();
+    const handleTodoComplete = useCompleteTodo()
+    const handleTodoDelete = useDeleteTodo()
 
-    const {title, description, status} = todo
+    const { title, description, status } = todo
 
     const [newFields, setNewFields] = useState({
         newTitle: title || "",
@@ -15,10 +19,10 @@ const Todo = ({index, todo}) => {
     })
 
     const handleChange = (name, e) => {
-        setNewFields((prevState) => ({...prevState, [name]: e.target.value}))
+        setNewFields((prevState) => ({ ...prevState, [name]: e.target.value }))
     }
 
-    const { newTitle, newDescription} = newFields;
+    const { newTitle, newDescription } = newFields;
 
     const handleTodoUpdate = (value) => {
         const num = Number(value);
@@ -28,10 +32,21 @@ const Todo = ({index, todo}) => {
             newTitle: title || "",
             newDescription: description || ""
         })
-    
 
-        console.log({index: num, title: newTitle, description: newDescription})
+
+        console.log({ index: num, title: newTitle, description: newDescription })
     }
+
+    const handleDelete = (value) => {
+        const index = Number(value);
+        handleTodoDelete(index);
+    }
+
+    const handleDone = (value) => {
+        const index = Number(value);
+        handleTodoComplete(index);
+    }
+
 
     return (
         <Box className="w-full">
@@ -76,7 +91,7 @@ const Todo = ({index, todo}) => {
                                     </Button>
                                 </AlertDialog.Cancel>
                                 <AlertDialog.Action>
-                                    <Button variant="solid" color="red">
+                                    <Button onClick={() => handleDelete(index)} variant="solid" color="red">
                                         Delete
                                     </Button>
                                 </AlertDialog.Action>
@@ -86,9 +101,9 @@ const Todo = ({index, todo}) => {
 
                     {/* Update todo inputs */}
                     <Dialog.Root>
-                        <Dialog.Trigger>
+                        {status === "Completed" || "Edited" && <Dialog.Trigger>
                             <Button color="orange">Edit</Button>
-                        </Dialog.Trigger>
+                        </Dialog.Trigger>}
 
                         <Dialog.Content maxWidth="450px">
                             <Dialog.Title>Edit Todo</Dialog.Title>
@@ -112,9 +127,9 @@ const Todo = ({index, todo}) => {
                                         Todo Description
                                     </Text>
                                     <TextArea
-                                    placeholder="Enter description"
-                                    value={newDescription}
-                                    onChange={(e) => handleChange("newDescription", e)}
+                                        placeholder="Enter description"
+                                        value={newDescription}
+                                        onChange={(e) => handleChange("newDescription", e)}
 
 
                                     />
@@ -129,7 +144,7 @@ const Todo = ({index, todo}) => {
                                 </Dialog.Close>
 
                                 <Dialog.Close>
-                                    <Button  onClick={() => handleTodoUpdate(index)}>Update</Button>
+                                    <Button onClick={() => handleTodoUpdate(index)}>Update</Button>
 
                                 </Dialog.Close>
 
@@ -140,9 +155,9 @@ const Todo = ({index, todo}) => {
 
                     {/* Complete Alert */}
                     <AlertDialog.Root>
-                        <AlertDialog.Trigger>
+                        {status === "Completed" || "Edited" && <AlertDialog.Trigger>
                             <Button color="green">Done</Button>
-                        </AlertDialog.Trigger>
+                        </AlertDialog.Trigger>}
                         <AlertDialog.Content maxWidth="450px">
                             <AlertDialog.Title>Completed Todo</AlertDialog.Title>
                             <AlertDialog.Description size="2">
@@ -156,7 +171,7 @@ const Todo = ({index, todo}) => {
                                     </Button>
                                 </AlertDialog.Cancel>
                                 <AlertDialog.Action>
-                                    <Button variant="solid" color="green">
+                                    <Button onClick={() => handleDone(index)} variant="solid" color="green">
                                         Yes, I have
                                     </Button>
                                 </AlertDialog.Action>

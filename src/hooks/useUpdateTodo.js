@@ -2,6 +2,8 @@ import { useCallback } from "react"
 import useContractInstance from "./useContractInstance";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { baseSepolia } from "@reown/appkit/networks";
+import { ErrorDecoder } from "ethers-decode-error";
+import { toast } from "react-toastify";
 
 
 
@@ -53,8 +55,10 @@ const useUpdateTodo = () => {
         toast.error("Failed to update todo");
         return;
       } catch (error) {
-        console.error("Error from updating todo", error);
-        toast.error("Failed to update todo");
+        const errorDecoder = ErrorDecoder.create();
+        const decodeError = await errorDecoder.decode(error);
+        console.error("Error from upating todo", error);
+        toast.error(decodeError.reason);
       }
     },
     [contract, address, chainId])
