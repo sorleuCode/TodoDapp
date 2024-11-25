@@ -152,6 +152,7 @@ const Todo = ({ index, todo }) => {
                             </Flex>
                         </Dialog.Content>
                     </Dialog.Root>
+                    
 
                     {/* Complete Alert */}
                     <AlertDialog.Root>
